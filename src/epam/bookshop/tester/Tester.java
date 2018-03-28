@@ -8,10 +8,10 @@ import epam.bookshop.exception.*;
 import epam.bookshop.utils.TestingUtils;
 
 public class Tester {
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		boolean exit = false;
 		TestingUtils testHelper = new TestingUtils();
-		try (Scanner sc = new Scanner(System.in);) {
+		try (Scanner scan = new Scanner(System.in);) {
 			while (exit==false) {
 				System.out.println("\n ***** MENU *****");
 				System.out.println("1) Display available books to user");
@@ -20,16 +20,24 @@ public class Tester {
 				System.out.println("4) Show Cart");
 				System.out.println("5) Check Out");
 				System.out.println(" Enter your choice : ");
-				switch (sc.nextInt()) {
+				switch (scan.nextInt()) {
 				case 1:
 					testHelper.displayBooks();
 					break;
-				case 2:
-					testHelper.addToCart();
-					break;
-				case 3:
-					testHelper.deleteFromCart();
-					break;
+				case 2:try{
+					testHelper.addToCart(scan);
+				}catch(BookShopException e)
+				{
+					System.out.println(e.getMessage());
+				}
+				break;
+				case 3:try{
+					testHelper.deleteFromCart(scan);
+				}catch(BookShopException e)
+				{
+					System.out.println(e.getMessage());
+				}
+				break;
 				case 4:
 					testHelper.showCart();
 					break;

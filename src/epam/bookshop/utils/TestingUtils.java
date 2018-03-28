@@ -10,8 +10,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import epam.bookshop.core.Book;
-import epam.bookshop.exception.BookShopExceptionHandling;
-
+import epam.bookshop.exception.BookShopException;
 public class TestingUtils {
 
 	// All books present in the bookstore
@@ -27,54 +26,49 @@ public class TestingUtils {
 		}
 		cart = new ArrayList<>();
 	}
-
 	public void displayBooks() {
 		Collection<Book> booksMap = bookStore.values();
 		for (Book book : booksMap)
 			System.out.println(book);
 	}
-
-	public void addToCart() throws Exception {
-		Scanner scan = new Scanner(System.in);
+	public void addToCart(Scanner scan) throws BookShopException {
 		System.out.println("Enter Title of Book : ");
 		String title = scan.next();
 
 		if (bookStore.containsKey(title)) {
-			Book selectedBook=bookStore.get(title);
-			if(selectedBook.getQuantity()>0){
-				selectedBook.setQuantity(selectedBook.getQuantity()-1);
+			Book selectedBook = bookStore.get(title);
+			if (selectedBook.getQuantity() > 0) {
+				selectedBook.setQuantity(selectedBook.getQuantity() - 1);
 				cart.add(selectedBook);
 				System.out.println("Book added to cart");
-			}
-			else
-			{
-				throw new BookShopExceptionHandling("Not in Stock");
+			} else {
+				throw new BookShopException(" #### Sorry..Out of Stock ####");
 			}
 		} else {
-			throw new BookShopExceptionHandling("This title is not available in book store");
+			throw new BookShopException("#### This title is not available in book store ####");
 		}
 	}
-
-	public void deleteFromCart() throws Exception {
-		Scanner scan = new Scanner(System.in);
+	public void deleteFromCart(Scanner scan) throws BookShopException {
 		System.out.println("Enter Title of Book : ");
-		Book book = new Book(scan.next());
-
+		String title = scan.next();
+		Book book = new Book(title);
 		int index = cart.indexOf(book);
-		scan.close();
+
 		if (index == -1)
-			throw new BookShopExceptionHandling("This book is not present in the cart");
+			throw new BookShopException("#### This book is not present in the cart ####");
+
+		// when book is present in the Cart , remove it and update its quantity
+		// in book store
 		cart.remove(index);
-		
+		book = bookStore.get(title);
+		book.setQuantity(book.getQuantity() + 1);
 		System.out.println("Book deleted from cart successfully");
 	}
-
 	public void showCart() {
 		System.out.println("**** CART ****");
 		for (Book book : cart)
 			System.out.println(book);
 	}
-	
 	public void checkout() {
 		double total = 0;
 		System.out.println("Cart Contents : ");
@@ -85,5 +79,4 @@ public class TestingUtils {
 		System.out.println("****Total amount to be paid : " + total + " ****");
 		System.out.println("Have a nice day...Visit Again :) ");
 	}
-
 }
